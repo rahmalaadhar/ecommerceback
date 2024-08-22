@@ -2,8 +2,10 @@ const express = require('express');
 const router = express.Router();
 // Créer une instance de categorie.
 const Categorie = require('../Models/categorie');
+const { verifyToken } = require('../Middleware/verif-token');
+const { authorizeRoles } = require('../Middleware/authorizeRoles');
 // afficher la liste des categories.
-router.get('/', async (req, res, )=> {
+router.get('/',verifyToken,authorizeRoles("user","admin"), async (req, res, )=> {
     try{
         //sort pour les classer selon l'ordre decroissant
     const cat=await Categorie.find({},null,{sort: {'_id': -1}})

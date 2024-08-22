@@ -61,5 +61,28 @@ router.delete('/:articleId', async (req, res) => {
         res.status(404).json({ message: error.message })
     }
 });
+//code et formule de la pagination 
+
+router.get('/art/pagination', async(req, res) => {
+    //filtre pour le bouton search
+    const filtre = req.query.filtre || "";
+    const page = parseInt(req.query.page);
+    //pagezize c'est le nb d'article par page exp(page1 contient le 5 premier art,page2 contient du 6 au 10)
+    const pageSize = parseInt(req.query.pageSize);
+    // Calculate the start and end indexes for the requested page
+    const startIndex = (page - 1) * pageSize;
+    const endIndex = page * pageSize;
+    //exec pour executer et populate pour afficher tous les attributs de la classe categorie
+    const articles = await Article.find({ designation: { $regex: filtre, $options:
+        "i"}}, null, {sort: {'_id': -1}}).populate("scategorieID").exec()
+    // Slice(pour trancher une partie du tab et l'afficher dans un nv tab) the products array based on the indexes
+    const paginatedProducts = articles.slice(startIndex, endIndex);
+    // Calculate the total number of pages
+    //math.ceil fait l'arrondissement superieur du valeur
+    const totalPages = Math.ceil(articles.length / pageSize);
+    // Send the paginated products and total pages as the API response
+    res.json({ products: paginatedProducts, totalPages });
+    });
+    
 
 module.exports = router
