@@ -37,6 +37,7 @@ var mailOption ={
     transporter.sendMail(mailOption,function(error,info){
     if(error){
     console.log(error)
+    
     }
     else{
     console.log('verification email sent to your gmail account ')
